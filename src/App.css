@@ -1,3 +1,7 @@
 .App {
   min-height: 100%;
 }
+
+.todo-container {
+  overflow-y: scroll;
+}

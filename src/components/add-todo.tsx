@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useTodoSave } from "./hooks/todo-hook";
-
 export function AddTodo() {
   const [label, setLabel] = useState("");
   const { saveData } = useTodoSave(label);
@@ -17,6 +16,11 @@ export function AddTodo() {
           type="text"
           onChange={(event) => {
             setLabel(event.target.value);
+          }}
+          onKeyPress={(event) => {
+            if (event.key === "Enter" || event.keyCode === 13) {
+              handleSave();
+            }
           }}
         />
       </div>

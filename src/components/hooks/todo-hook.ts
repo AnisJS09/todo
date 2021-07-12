@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addToDo,
-  deleteToDo,
-  fetchFromLocalStorage,
-} from "../../store/store.actions";
+import { deleteToDo, fetchFromLocalStorage } from "../../store/store.actions";
 import { AppState, Todo } from "../../store/store.types";
-import { ApiMock } from "../utils/api";
+import { ApiMock, ApiResponse } from "../utils/api";
+import { hasAllKeys } from "../utils/helpers";
 
 export const useTodoSave = (label: string) => {
   const [response, setResponse] = useState([] as Todo[]);
@@ -20,10 +17,14 @@ export const useTodoSave = (label: string) => {
       label: label,
       done: false,
     };
+    if (!hasAllKeys(["id", "label", "done"], todo)) return;
     setloading(true);
-    dispatch(addToDo(todo));
-    ApiMock.saveToDo(state.todos)
-      .then((value) => setResponse(value.data))
+    console.log(state);
+    ApiMock.saveToDo(state.todos.concat(todo))
+      .then((value) => {
+        setResponse(value.data);
+        dispatch(fetchFromLocalStorage(value.data));
+      })
       .catch((error) => setError(error))
       .finally(() => setloading(false));
   };
@@ -32,13 +33,16 @@ export const useTodoSave = (label: string) => {
 
 export const useGetTodos = () => {
   const [response, setResponse] = useState([] as Todo[]);
-  const [error, setError] = useState({});
+  const [error, setError] = useState({} as ApiResponse);
   const [loading, setloading] = useState(true);
   const state = useSelector((state: AppState) => state);
+
   useEffect(() => {
     setloading(true);
     ApiMock.getTodos()
-      .then((value) => setResponse(value.data))
+      .then((value) => {
+        setResponse(value.data);
+      })
       .catch((error) => setError(error))
       .finally(() => setloading(false));
   }, [state]);
@@ -46,19 +50,19 @@ export const useGetTodos = () => {
   return { response, error, loading };
 };
 
-export const useTodoDelete = (todo: Todo) => {
+export const useTodoDelete = () => {
   const [response, setResponse] = useState([] as Todo[]);
   const [error, setError] = useState({});
   const [loading, setloading] = useState(true);
-  const state = useSelector((state: AppState) => state);
 
   const dispatch = useDispatch();
-  const deleteData = () => {
+  const deleteData = (todo: Todo) => {
     setloading(true);
     dispatch(deleteToDo(todo));
-    dispatch(fetchFromLocalStorage(state.todos));
-    ApiMock.removeItem(state.todos)
-      .then((value) => setResponse(value.data))
+    ApiMock.removeItem(todo)
+      .then((value) => {
+        setResponse(value.data);
+      })
       .catch((error) => setError(error))
       .finally(() => setloading(false));
   };

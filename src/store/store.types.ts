@@ -11,4 +11,5 @@ export interface AppAction<T> {
 
 export interface AppState {
   todos: Todo[];
+  toast: boolean;
 }

@@ -8,8 +8,11 @@ export class ApiMock {
   public static init() {}
 
   public static async saveToDo(todos: Todo[]): Promise<ApiResponse> {
+    //const dataToBeInserted = this.dataToBeInserted(todos);
+    //console.log(dataToBeInserted);
     return new Promise((resolve, reject) => {
-      if (todos?.length > 0) {
+      if (todos) {
+        localStorage.removeItem("todos");
         localStorage.setItem("todos", JSON.stringify(todos));
         resolve({
           data: todos,
@@ -46,11 +49,14 @@ export class ApiMock {
     });
   }
 
-  public static async removeItem(todos: Todo[]): Promise<ApiResponse> {
+  public static async removeItem(todo: Todo): Promise<ApiResponse> {
     return new Promise((resolve, reject) => {
       try {
-        localStorage.removeItem("todos");
-        localStorage.setItem("todos", todos.toString());
+        const data = localStorage.getItem("todos");
+        let todos = data ? (JSON.parse(data) as Todo[]) : [];
+        todos = todos.filter((e) => e.id !== todo.id);
+        console.log(todos);
+        localStorage.setItem("todos", JSON.stringify(todos));
         resolve({
           data: todos,
           code: 200,
@@ -64,5 +70,12 @@ export class ApiMock {
         });
       }
     });
+  }
+
+  public static dataToBeInserted(todos: Todo[]) {
+    let localData = localStorage.getItem("todos");
+    const existing = localData ? (JSON.parse(localData) as Todo[]) : null;
+    const diff = existing ? [...todos, ...existing] : todos;
+    return diff;
   }
 }

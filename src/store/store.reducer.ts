@@ -3,6 +3,7 @@ import { AppAction, AppState } from "./store.types";
 
 export const initState: AppState = {
   todos: [],
+  toast: false,
 };
 
 const appReducer = (
@@ -18,7 +19,6 @@ const appReducer = (
     }
 
     case ACTIONS.ADD: {
-      console.log(state, action);
       return {
         ...state,
         todos: state.todos.concat(action.payload),
@@ -27,7 +27,7 @@ const appReducer = (
 
     case ACTIONS.EDIT: {
       const updateToDo = () => {
-        return state.todos.filter((todo) => todo.id === action.payload.id);
+        return state.todos.filter((todo) => todo.id !== action.payload.id);
       };
       return {
         ...state,
@@ -38,15 +38,10 @@ const appReducer = (
       const deleteToDo = () => {
         return state.todos.filter((todo) => todo.id !== action.payload.id);
       };
+      console.log(deleteToDo());
       return {
         ...state,
         todos: deleteToDo(),
-      };
-    }
-    case ACTIONS.UNDO: {
-      return {
-        ...state,
-        todos: state.todos.concat(action.payload),
       };
     }
     default:
