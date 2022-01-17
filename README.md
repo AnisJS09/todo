@@ -1,3 +1,4 @@
+[![Quality Gate Status](http://34.125.210.175:9000/api/project_badges/measure?project=todo&metric=alert_status&token=8510db739d5ebd76ef5514a68180b4e8566bb357)](http://34.125.210.175:9000/dashboard?id=todo)
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
